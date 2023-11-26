@@ -283,44 +283,317 @@ classDiagram
 
 - [第一部分 Python面向对象编程](#第一部分)
 - [第二部分 Codewars Kata挑战](#第二部分)
-- [第三部分 使用Mermaid绘制程序流程图](#第三部分)
 
-注意代码需要使用markdown的代码块格式化，例如Git命令行语句应该使用下面的格式：
-
-![Git命令](/Experiments/img/2023-07-26-22-48.png)
-
-显示效果如下：
-
-```bash
-git init
-git add .
-git status
-git commit -m "first commit"
-```
-
-如果是Python代码，应该使用下面代码块格式，例如：
-
-![Python代码](/Experiments/img/2023-07-26-22-52-20.png)
-
-显示效果如下：
+第一题：面向对象的海盗
 
 ```python
-def add_binary(a,b):
-    return bin(a+b)[2:]
+class Ship:
+    def __init__(self, draft, crew):
+        self.draft = draft
+        self.crew = crew
+        
+    def is_worth_it(self):
+        if self.draft - (self.crew * 1.5) > 20:
+            return True
+        else:
+            return False
 ```
 
-代码运行结果的文本可以直接粘贴在这里。
+第二题： 搭建积木
 
-**注意：不要使用截图，Markdown文档转换为Pdf格式后，截图可能会无法显示。**
+```python
+class Block:
+    def __init__(self, dimensions):
+        # 初始化块的宽度、长度和高度属性
+        self.width = dimensions[0]
+        self.length = dimensions[1]
+        self.height = dimensions[2]
+        
+    def get_width(self):
+        # 返回块的宽度
+        return self.width
+    
+    def get_length(self):
+        # 返回块的长度
+        return self.length
+    
+    def get_height(self):
+        # 返回块的高度
+        return self.height
+    
+    def get_volume(self):
+        # 计算并返回块的体积
+        return self.width * self.length * self.height
+    
+    def get_surface_area(self):
+        # 计算并返回块的表面积
+        return 2 * (self.width * self.length + self.width * self.height + self.length * self.height)
+```
+
+第三题： 分页助手
+
+```python
+class PaginationHelper:
+    def __init__(self, collection, items_per_page):
+        # 初始化 PaginationHelper 类
+        self.collection = collection
+        self.items_per_page = items_per_page
+
+    def item_count(self):
+        # 返回集合/数组中的项目总数
+        return len(self.collection)
+
+    def page_count(self):
+        # 返回分页后的总页数
+        return (len(self.collection) + self.items_per_page - 1) // self.items_per_page
+
+    def page_item_count(self, page_index):
+        # 返回指定页的项目数量
+        if page_index < 0 or page_index >= self.page_count():
+            return -1
+        
+        if page_index == self.page_count() - 1:
+            return len(self.collection) % self.items_per_page or self.items_per_page
+        else:
+            return self.items_per_page
+
+    def page_index(self, item_index):
+        # 返回包含指定项目索引的页索引
+        if item_index < 0 or item_index >= len(self.collection):
+            return -1
+        
+        return item_index // self.items_per_page
+```
+
+第四题： 向量（Vector）类
+
+```python
+import math
+
+class Vector:
+    def __init__(self, components):
+        # 初始化 Vector 类
+        self.components = components
+
+    def __str__(self):
+        # 返回向量的字符串表示形式
+        return '(' + ','.join(str(x) for x in self.components) + ')'
+
+    def equals(self, other):
+        # 检查两个向量是否相等
+        return self.components == other.components
+
+    def add(self, other):
+        # 对向量进行加法运算
+        if len(self.components) != len(other.components):
+            raise ValueError("Cannot add vectors of different lengths")
+
+        result = [x + y for x, y in zip(self.components, other.components)]
+        return Vector(result)
+
+    def subtract(self, other):
+        # 对向量进行减法运算
+        if len(self.components) != len(other.components):
+            raise ValueError("Cannot subtract vectors of different lengths")
+
+        result = [x - y for x, y in zip(self.components, other.components)]
+        return Vector(result)
+
+    def dot(self, other):
+        # 计算向量的点积
+        if len(self.components) != len(other.components):
+            raise ValueError("Cannot calculate dot product of vectors of different lengths")
+
+        result = sum(x * y for x, y in zip(self.components, other.components))
+        return result
+
+    def norm(self):
+        # 计算向量的长度
+        result = math.sqrt(sum(x ** 2 for x in self.components))
+        return result
+```
+
+第五题： Codewars风格的等级系统
+
+```python
+class User:
+    rank_vector = [i for i in range(-8, 9) if i != 0]  # 可接受的等级范围
+
+    def __init__(self):
+        self.rank = -8  # 初始等级为-8
+        self.progress = 0  # 初始进度为0
+
+    def inc_progress(self, kata):
+        if kata not in self.rank_vector:
+            raise ValueError("不在指定的等级范围内")
+        
+        if self.rank == 8:
+            progress_meter = 0  # 达到最高等级时，进度为0
+        elif self.rank_vector.index(kata) == self.rank_vector.index(self.rank):
+            progress_meter = self.progress + 3  # 完成与当前等级相同的活动，进度加3
+        elif self.rank_vector.index(kata) == self.rank_vector.index(self.rank) - 1:
+            progress_meter = self.progress + 1  # 完成比当前等级低一级的活动，进度加1
+        elif self.rank_vector.index(kata) <= self.rank_vector.index(self.rank) - 2:
+            progress_meter = self.progress  # 完成比当前等级低两级或更低的活动，进度不变
+        elif self.rank == -1 and kata == 1:
+            progress_meter = self.progress + 10  # 特殊情况：完成-1等级和1等级之间的活动，进度加10
+        else:
+            difference = abs(self.rank_vector.index(kata) - self.rank_vector.index(self.rank))
+            progress_meter = self.progress + 10 * difference ** 2  # 根据等级差异计算进度
+        
+        progress_index = divmod(progress_meter, 100)
+        self.progress = progress_index[1]  # 更新进度
+        self.rank = self.__update_rank__(progress_index[0])  # 更新等级
+        
+        if self.rank == 8:
+            self.progress = 0  # 达到最高等级时，进度重置为0
+        
+        return self.progress
+
+    def __update_rank__(self, level=1):
+        if self.rank == 8:
+            return self.rank  # 已达到最高等级，不再更新
+        elif self.rank_vector.index(self.rank) + level > self.rank_vector.index(8):
+            self.rank = 8  # 更新等级为最高等级
+        else:
+            self.rank = self.rank_vector[self.rank_vector.index(self.rank) + level]  # 更新等级为下一个等级
+        
+        return self.rank
+```
+
+- [第三部分 使用Mermaid绘制程序流程图](#第三部分)
+
+第二题： 搭建积木
+
+```mermaid
+---
+title: Block 类图
+---
+classDiagram
+    class Block {
+        - width: int
+        - length: int
+        - height: int
+        + __init__(dimensions: List[int])
+        + get_width(): int
+        + get_length(): int
+        + get_height(): int
+        + get_volume(): int
+        + get_surface_area(): int
+    }
+```
 
 ## 实验考查
 
 请使用自己的语言并使用尽量简短代码示例回答下面的问题，这些问题将在实验检查时用于提问和答辩以及实际的操作。
 
 1. Python的类中__init__方法起什么作用？
+
+```
+在Python中，__init__方法是一个特殊的方法，它在创建类的实例时被调用。它的主要作用是初始化类的实例，并可用于执行任何必要的设置或准备工作。
+
+下面是一个简短的代码示例，说明__init__方法的作用：
+class MyClass:
+    def __init__(self, name):
+        self.name = name
+        print("Initializing MyClass")
+
+    def say_hello(self):
+        print(f"Hello, {self.name}!")
+
+# 创建类的实例
+obj = MyClass("Alice")
+
+# 调用实例方法
+obj.say_hello()
+
+在上面的示例中，MyClass类有一个__init__方法，它接受一个name参数并将其存储为实例变量self.name。在创建MyClass的实例时，__init__方法被自动调用，并输出"Initializing MyClass"。然后，我们可以通过调用实例方法say_hello打印出"Hello, Alice!"，其中self.name被使用。
+
+因此，可以看出__init__方法在类的实例化过程中起到了初始化实例的作用，可以用于设置实例变量或执行其他必要的操作。
+```
+
 2. Python语言中如何继承父类和改写（override）父类的方法。
+
+```
+在Python语言中，可以通过创建一个子类来继承父类，并且可以在子类中对父类的方法进行改写（override）。
+
+下面是一个简短的代码示例，演示如何继承父类和改写父类的方法：
+class ParentClass:
+    def my_method(self):
+        print("This is the parent class method.")
+
+class ChildClass(ParentClass):
+    def my_method(self):
+        print("This is the child class method.")
+
+# 创建父类实例并调用方法
+parent_obj = ParentClass()
+parent_obj.my_method()  # 输出："This is the parent class method."
+
+# 创建子类实例并调用方法
+child_obj = ChildClass()
+child_obj.my_method()  # 输出："This is the child class method."
+
+在上面的示例中，我们定义了一个父类ParentClass，其中包含一个名为my_method的方法。然后，我们创建了一个子类ChildClass，它继承了父类ParentClass。
+
+在子类中，我们定义了一个与父类同名的方法my_method，这样就改写（override）了父类的方法。在子类的方法中，我们输出了不同的消息。
+
+当我们实例化父类或子类的对象并调用my_method方法时，会根据对象的类型决定调用父类的方法还是子类的方法。在上述示例中，parent_obj.my_method()调用的是父类的方法，输出"This is the parent class method."，而child_obj.my_method()调用的是子类的方法，输出"This is the child class method."。
+
+通过继承和改写父类的方法，我们可以在子类中根据需要修改或扩展父类的行为。
+```
+
 3. Python类有那些特殊的方法？它们的作用是什么？请举三个例子并编写简单的代码说明。
+
+```
+在Python中，类可以定义一些特殊的方法，也称为魔术方法或双下方法（dunder methods），它们以双下划线（__）开头和结尾。这些特殊方法用于实现类的特定行为和功能。以下是三个常用的特殊方法和它们的作用：
+
+1、__init__: 这是类的构造方法，在创建类的实例时被调用。它用于初始化实例的状态和执行必要的设置。例如：
+class MyClass:
+    def __init__(self, name):
+        self.name = name
+
+obj = MyClass("Alice")
+print(obj.name)  # 输出："Alice"
+
+在上面的示例中，__init__方法接受一个name参数，并将其存储为实例变量self.name。
+
+2、__str__: 这个方法返回一个可读性好的字符串表示类的实例。它通常用于打印对象或在字符串上下文中使用。例如：
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return f"Point({self.x}, {self.y})"
+
+p = Point(2, 3)
+print(p)  # 输出："Point(2, 3)"
+
+在上面的示例中，__str__方法返回一个形如"Point(x, y)"的字符串，表示Point类的实例。
+
+3、__len__: 这个方法返回类的实例的长度或大小。它通常用于支持内置的len()函数或对类进行迭代操作。例如：
+class MyList:
+    def __init__(self, items):
+        self.items = items
+
+    def __len__(self):
+        return len(self.items)
+
+my_list = MyList([1, 2, 3, 4, 5])
+print(len(my_list))  # 输出：5
+
+在上面的示例中，__len__方法返回self.items的长度，以支持对MyList类实例的长度操作。
+
+这些只是Python类中一些常用的特殊方法的示例。通过实现这些特殊方法，我们可以自定义类的行为，使其更加灵活和适应特定的需求。
+```
 
 ## 实验总结
 
 总结一下这次实验你学习和使用到的知识，例如：编程工具的使用、数据结构、程序语言的语法、算法、编程技巧、编程思想。
+
+完成实验7，我的收获如下：
+
+- 这次实验我学习了Python类和继承的基础知识
+- 学习了namedtuple和DataClass的使用
+- 做了codewars上面不同难度的题目，这对我熟悉python的基本语法很有帮助。
